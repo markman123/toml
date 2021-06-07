@@ -878,8 +878,9 @@ class TomlDecoder(object):
             self.load_inline_object(v, inline_object)
             return (inline_object, "inline_object")
         elif TIME_RE.match(v):
-            h, m, s, _, ms = TIME_RE.match(v).groups()
-            time = datetime.time(int(h), int(m), int(s), int(ms) if ms else 0)
+            h, m, s, _, secfrac = TIME_RE.match(v).groups()
+            ms = int(int(secfrac) * (10 ** (6 - len(secfrac)))) if secfrac else 0
+            time = datetime.time(int(h), int(m), int(s), int(ms))
             return (time, "time")
         else:
             parsed_date = _load_date(v)
